@@ -38,4 +38,5 @@ print(len(BookList.objects.all()))
 
 if __name__ == '__main__':
     delete_all()
+    print(f'삭제 후 남은 rows:{len(BookList.objects.all())}')
     

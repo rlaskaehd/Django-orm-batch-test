@@ -1,4 +1,4 @@
-insert_size, repeat_no, instance_build_seconds, insert_seconds, total_seconds, avg_row_insert_sec
+insert_size,repeat_no,instance_build_seconds,insert_seconds,total_seconds,avg_row_insert_sec
 1,1,,38.42138855741359,38.441586084023584,0.00038421388557413594
 1,2,,37.886559676146135,37.90366116701625,0.00037886559676146136
 1,3,,38.00152551551582,38.018935874977615,0.0003800152551551582
