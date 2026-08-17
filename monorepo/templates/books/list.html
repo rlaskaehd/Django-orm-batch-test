@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>도서 목록 | Book Library</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #172033;
+            --muted: #667085;
+            --line: #e6eaf0;
+            --surface: #ffffff;
+            --canvas: #f5f7fb;
+            --brand: #3659d9;
+            --brand-soft: #eef2ff;
+            --shadow: 0 18px 45px rgba(31, 43, 76, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--canvas);
+            color: var(--ink);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page-shell {
+            width: min(1440px, 100%);
+            margin: 0 auto;
+            padding: clamp(24px, 4vw, 56px) clamp(16px, 4vw, 48px);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            margin: 0 0 8px;
+            color: var(--brand);
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            letter-spacing: -0.04em;
+        }
+
+        .intro {
+            margin-bottom: 0;
+            color: var(--muted);
+        }
+
+        .total-card {
+            min-width: 132px;
+            padding: 16px 20px;
+            border: 1px solid #dfe5f2;
+            border-radius: 16px;
+            background: var(--surface);
+            box-shadow: 0 10px 24px rgba(31, 43, 76, 0.05);
+            text-align: right;
+        }
+
+        .total-card strong {
+            display: block;
+            color: var(--brand);
+            font-size: 1.65rem;
+            line-height: 1.1;
+        }
+
+        .total-card span {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .table-card {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .table-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 24px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .table-toolbar h2 {
+            margin-bottom: 4px;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .table-toolbar p {
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .page-size {
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: var(--brand-soft);
+            color: var(--brand);
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .table-scroll {
+            overflow: auto;
+            max-height: min(68vh, 720px);
+        }
+
+        table {
+            width: 100%;
+            min-width: 1060px;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9rem;
+        }
+
+        caption {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+        }
+
+        th,
+        td {
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: #f9faff;
+            color: #526079;
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            transition: background-color 120ms ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fcfdff;
+        }
+
+        tbody tr:hover {
+            background: #f3f6ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .id-cell {
+            color: var(--muted);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .title-cell {
+            min-width: 260px;
+            max-width: 360px;
+            font-weight: 700;
+        }
+
+        .title-cell,
+        .publisher-cell,
+        .author-cell {
+            overflow-wrap: anywhere;
+        }
+
+        .date-cell,
+        .price-cell,
+        .count-cell {
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .price-cell,
+        .count-cell {
+            text-align: right;
+        }
+
+        .detail-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--brand);
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .detail-link:hover {
+            text-decoration: underline;
+        }
+
+        .empty-state {
+            padding: 64px 24px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 2rem;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 6px;
+            color: var(--ink);
+            font-size: 1rem;
+        }
+
+        .empty-state p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 20px 24px 24px;
+        }
+
+        .pagination a,
+        .pagination .current,
+        .pagination .disabled {
+            display: inline-flex;
+            min-width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .pagination a {
+            background: var(--surface);
+        }
+
+        .pagination a:hover {
+            border-color: #bdc9f7;
+            background: var(--brand-soft);
+            color: var(--brand);
+        }
+
+        .pagination .current {
+            border-color: var(--brand);
+            background: var(--brand);
+            color: #fff;
+            font-weight: 800;
+        }
+
+        .pagination .disabled {
+            color: #b0b8c8;
+        }
+
+        @media (max-width: 640px) {
+            .page-header,
+            .table-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .total-card {
+                width: 100%;
+                text-align: left;
+            }
+
+            .pagination {
+                padding-right: 12px;
+                padding-left: 12px;
+            }
+
+            .pagination a,
+            .pagination .disabled {
+                padding: 0 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page-shell">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">BOOK LIBRARY</p>
+                <h1>도서 목록</h1>
+                <p class="intro">등록된 도서를 한눈에 확인하고 상세 페이지로 이동할 수 있습니다.</p>
+            </div>
+            <div class="total-card" aria-label="전체 도서 수">
+                <strong>{{ page_obj.paginator.count }}</strong>
+                <span>전체 도서</span>
+            </div>
+        </header>
+
+        <section class="table-card" aria-labelledby="books-heading">
+            <div class="table-toolbar">
+                <div>
+                    <h2 id="books-heading">등록 도서</h2>
+                    <p>현재 페이지 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</p>
+                </div>
+                <span class="page-size">페이지당 25개</span>
+            </div>
+
+            <div class="table-scroll">
+                <table>
+                    <caption>등록된 도서 목록</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">대표 저자</th>
+                            <th scope="col">출판사</th>
+                            <th scope="col">출판일</th>
+                            <th scope="col">정가</th>
+                            <th scope="col">상세</th>
+                            <th scope="col">저자 수</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td class="id-cell">#{{ book.id }}</td>
+                            <td class="title-cell">{{ book.title }}</td>
+                            <td class="author-cell">{{ book.primary_author|default:"-" }}</td>
+                            <td class="publisher-cell">{{ book.publisher|default:"-" }}</td>
+                            <td class="date-cell">{{ book.published_date|default:"-" }}</td>
+                            <td class="price-cell">
+                                {% if book.list_price is not None %}
+                                    {{ book.list_price }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="detail-link" href="{{ book.detail_url }}" target="_blank" rel="noopener noreferrer" title="{{ book.detail_url }}">
+                                    상세 보기 <span aria-hidden="true">↗</span>
+                                </a>
+                            </td>
+                            <td class="count-cell">{{ book.author_count }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <span class="empty-state-icon" aria-hidden="true">📚</span>
+                                    <h3>등록된 도서가 없습니다.</h3>
+                                    <p>도서 데이터가 적재되면 이곳에 목록이 표시됩니다.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if page_obj.paginator.num_pages > 1 %}
+            <nav class="pagination" aria-label="도서 목록 페이지 이동">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" aria-label="첫 페이지">처음</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" aria-label="이전 페이지">이전</a>
+                {% else %}
+                    <span class="disabled" aria-disabled="true">처음</span>
+                    <span class="disabled" aria-disabled="true">이전</span>
+                {% endif %}
+
+                <span class="current" aria-current="page">{{ page_obj.number }}</span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" aria-label="다음 페이지">다음</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="마지막 페이지">마지막</a>
+                {% else %}
+                    <span class="disabled" aria-disabled="true">다음</span>
+                    <span class="disabled" aria-disabled="true">마지막</span>
+                {% endif %}
+            </nav>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.85;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+        thead {
+            background: #667eea;
+            color: white;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr {
+            transition: 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f7f8ff;
+            transform: scale(1.01);
+        }
+
+        .name {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .email {
+            color: #666;
+        }
+
+        .date {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #eef0ff;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        @media(max-width:700px) {
+
+            body {
+                padding:20px;
+            }
+
+            table {
+                font-size:14px;
+            }
+
+            th, td {
+                padding:10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🎓 Student List</h1>
+        <p>등록된 학생 정보를 확인하세요.</p>
+    </div>
+
+
+    <div class="card">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>이름</th>
+                    <th>나이</th>
+                    <th>이메일</th>
+                    <th>등록일</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for student in students %}
+
+                <tr>
+                    <td class="name">
+                        {{ student.name }}
+                    </td>
+
+                    <td>
+                        <span class="badge">
+                            {{ student.age }}세
+                        </span>
+                    </td>
+
+                    <td class="email">
+                        {{ student.email }}
+                    </td>
+
+                    <td class="date">
+                        {{ student.created_at|date:"Y-m-d H:i" }}
+                    </td>
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="4" class="empty">
+                        등록된 학생이 없습니다.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

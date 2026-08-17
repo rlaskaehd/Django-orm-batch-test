@@ -58,6 +58,8 @@ book-data-pipeline/*
 
 # 데이터
 data/
+data/books.csv
+monorepo/db.sqlite3
 
 # mongodb settings
 monorepo/config/settings.py
