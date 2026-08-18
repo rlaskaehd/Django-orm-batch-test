@@ -85,7 +85,7 @@
 
 ### 시각화
 
-![alt text](image.png)
+![alt text](test/result/image.png)
 
 *전체 조건과 batch 조건만을 나누어 본 평균 INSERT 시간 추세입니다. 100,000건 처리 기준으로 `batch_size=100`이 최저점입니다.*
 
